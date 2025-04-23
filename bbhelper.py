@@ -44,8 +44,9 @@ class bbhelper:
             time.sleep(1)
             self.driver.find_element(By.XPATH, "//*[@id='menuPuller']").click()
             titles = self.titles
+            time.sleep(1)
             course_name = self.driver.find_element(By.CSS_SELECTOR,"#courseMenu_link").text
-            print(f"正在获取 {course_name}的作业喵~\n")
+            print(f"正在喵取 {course_name}的作业喵~\n")
             has_homework = 0
             for title in titles:
                 homework_list = self.driver.find_elements(By.CSS_SELECTOR, f"span[title*='{title}']")
@@ -53,6 +54,7 @@ class bbhelper:
                 self.driver.find_element(By.XPATH, "//*[@id='menuPuller']").click()
                 if homework_list != []:
                     has_homework = 1
+                    time.sleep(1)
                     if len(homework_list) != 1:
                         j = 0
                         for j in range(len(homework_list)):
@@ -78,11 +80,11 @@ class bbhelper:
             os.makedirs(f"./homework/{current_time}", exist_ok=True)
             with open(f"./homework/{current_time}/{course}_{current_time}.txt", "w", encoding="utf-8") as f:
                 f.write(homework)
-                print(f"已将{course}的作业写入文件{current_time}_{course}.txt喵~\n")
+                print(f"已将{course}的作业写入文件{current_time}_{course}喵~\n")
         print("作业在homework文件夹下喵~\n")
 
     def close(self):
-        print("获取作业完成，正在退出浏览器喵~")
+        print("喵取作业完成，正在退出浏览器喵~")
         self.driver.quit()
 
 if __name__ == '__main__':
@@ -93,7 +95,11 @@ if __name__ == '__main__':
         password = getpass("请输入CAS密码（密码不显示，输入完按回车即可）：")
         json.dump({"id": id, "password": password, "titles": ["作业", "ssignment", "omework"]}, open("login.json", "w", encoding="utf-8"))
     else:
-        print("欢迎使用bbhelper，已有登录信息，即将开始获取作业喵~")
+        print("欢迎使用bbhelper，已有登录信息，即将开始喵取作业喵~")
+    print("请确认喵取作业title是否在titles中喵~\n")
+    print("默认title有'作业'，'Assignment'，'Homework'喵~\n")
+    print("如果有其他title，请在login.json中添加喵~\n")
+    print("开始喵取作业喵~\n")
     titles = login["titles"]
     id = login["id"]
     password = login["password"]
