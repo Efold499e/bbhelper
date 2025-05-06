@@ -1,6 +1,6 @@
 import os
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -25,12 +25,17 @@ class bbhelper:
         self.driver.find_element(By.CSS_SELECTOR, "button[type='submit'][accesskey='l']").click()
         button = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "button[id='agree_button']")))
         button.click()
-    def get_homework(self):
-        homework = self.driver.find_element(By.CSS_SELECTOR, '#content_listContainer').text
-        print(homework +'\n')
-        self.driver.back()
-        return homework
-    def roll_course(self):
+    def get_homework(self):# roll_course()的子函数，用于具体获取作业操作，仅在roll_course()中调用
+        try:
+            homework = self.driver.find_element(By.CSS_SELECTOR, '#content_listContainer').text
+            print(homework +'\n')
+            self.driver.back()
+            return homework
+        except NoSuchElementException:
+            print("没有找到作业喵~\n")
+            self.driver.back()
+            return None
+    def roll_course(self):# 主要函数，用于遍历所有课程
         homework_dict = {}
         courses = self.driver.find_elements(By.CSS_SELECTOR,
             "a[href*='/webapps/blackboard/execute/launcher?type=Course'][target='_top']")
@@ -74,7 +79,7 @@ class bbhelper:
                 print(f"没有作业喵~\n")
             self.driver.back()
         return homework_dict
-    def write_homework(self, homework_dict):
+    def write_homework(self, homework_dict):# 用于将作业写入文件
         for course, homework in homework_dict.items():
             current_time = time.strftime("%Y-%m-%d", time.localtime())
             os.makedirs(f"./homework/{current_time}", exist_ok=True)
